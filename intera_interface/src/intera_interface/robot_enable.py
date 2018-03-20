@@ -30,7 +30,7 @@ import intera_dataflow
 from intera_core_msgs.msg import (
     AssemblyState,
 )
-import settings
+from .settings import SDK_VERSION, VERSIONS_SDK2ROBOT
 
 
 class RobotEnable(object):
@@ -162,7 +162,7 @@ http://sdk.rethinkrobotics.com/intera/SDK_Shell
                 timeout_msg=error_env,
                 body=pub.publish
             )
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ETIMEDOUT:
                 if self._state.error == True and self._state.stopped == False:
                     rospy.logwarn(error_nonfatal)
@@ -195,7 +195,7 @@ http://sdk.rethinkrobotics.com/intera/SDK_Shell
         @return: Returns True if SDK version is compatible with robot Version, False otherwise
         """
         param_name = "/manifest/robot_software/version/HLR_VERSION_STRING"
-        sdk_version = settings.SDK_VERSION
+        sdk_version = SDK_VERSION
 
         # get local lock for rosparam threading bug
         with self.__class__.param_lock:
@@ -215,7 +215,7 @@ http://sdk.rethinkrobotics.com/intera/SDK_Shell
                               robot_version)
                 return False
             robot_version = match.string[match.start(1):match.end(3)]
-            if robot_version not in settings.VERSIONS_SDK2ROBOT[sdk_version]:
+            if robot_version not in VERSIONS_SDK2ROBOT[sdk_version]:
                 errstr_version = """RobotEnable: Software Version Mismatch.
 Robot Software version (%s) does not match local SDK version (%s). Please
 Update your Robot Software. \
